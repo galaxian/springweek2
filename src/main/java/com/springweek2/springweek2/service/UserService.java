@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -23,6 +25,15 @@ public class UserService {
 
     public void resisterUser(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
+
+        if (!username.matches("^[A-Za-z\\d]{3,}$")) {
+            throw new IllegalArgumentException("아이디는 3자 이상 대소문자와 숫자만 사용가능합니다");
+        }
+
+        if (!requestDto.getPassword().matches("^{4,}$")) {
+            throw new IllegalArgumentException("비밀번호는 4자 이상만 사용가능합니다");
+        }
+
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
