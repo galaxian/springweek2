@@ -1,93 +1,151 @@
-$(document).ready(function () {
-    showPost();
-})
-
-function showPost() {
-    $.ajax({
-        type: 'GET',
-        url: '/api/posts',
-        success: function (response) {
-            for (let i = 0; i < response.length; i++) {
-                let post = response[i];
-                let id = post['id'];
-                let title = post['title']
-                let username = post['username'];
-                let modifiedAt = post['modifiedAt'];
-                let contents = post['contents'];
-                addHTML(id, title, username, modifiedAt, contents);
-            }
-        }
-    })
-}
-
-function addHTML(id, title, username, modifiedAt, contents) {
-    let tempListHtml = `<tr onclick='$("#${id}").addClass("is-active")'>
-                            <th>${title}</th>
-                            <th>${username}</th>
-                            <th>${modifiedAt}</th>
-                            </tr>`;
-    let tempPostHtml = `<div class="modal" id=${id}>
-                            <div class="modal-background" onclick='$("#${id}").removeClass("is-active")'></div>
-                            <div class="modal-content">
-                                <div class="box">
-                                    <article class="media">
-                                        <div class="media-content">
-                                            <div class="card">
-                                                <div class="card-content">
-                                                    <div class="media">
-                                                        <div class="media-left">
-                                                        </div>
-                                                        <div class="media-content">
-                                                            <p class="title is-4">${title}</p>
-                                                            <p class="subtitle is-6" style="text-align: right">${username}</p>
-                                                            <p class="subtitle is-6" style="text-align: right">${modifiedAt}</p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="content">
-                                                        ${contents}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <nav class="level is-mobile">
-                                                <div class="level-right">
-                                                    <div class="level-item">
-                                                        <a class="button is-sparta" onclick="updateState(${id})">게시글 수정하기</a>
-                                                    </div>
-                                                    <div class="level-item">
-                                                        <a class="button is-sparta" onclick="deletePost(${id})">게시글 삭제하기</a>
-                                                    </div>
-                                                    <div class="level-item">
-                                                        <a class="button is-sparta is-outlined"
-                                                           onclick='$("#${id}").removeClass("is-active")'>돌아가기</a>
-                                                    </div>
-                                                </div>
-                                            </nav>
-                                        </div>
-                                    </article>
-                                </div>
-                            </div>
-                            <button class="modal-close is-large" aria-label="close"
-                                    onclick='$("#${id}").removeClass("is-active")'></button>
-                        </div>`;
-    $("#tbody").append(tempListHtml);
-    $("#showModal").append(tempPostHtml);
-}
-
-function writePost() {
-    let title = $("#post-title").val();
-    let username = $("#post-username").val();
-    let contents = $("#post-contents").val();
-
-    let data = {"title": title, "username": username, "contents": contents};
-
-    $.ajax({
-        type: "POST",
-        url: "/api/posts",
-        contentType: "application/json", // JSON 형식으로 전달함을 알리기
-        data: JSON.stringify(data),
-        success: function (response) {
-            alert('게시글이 성공적으로 작성되었습니다.');
-            window.location.reload();
-        }
-    });
-}
+// let targetId;
+//
+// $(document).ready(function () {
+// // id 가 query 인 녀석 위에서 엔터를 누르면 execSearch() 함수를 실행하라는 뜻입니다.
+//     $('#query').on('keypress', function (e) {
+//         if (e.key == 'Enter') {
+//             execSearch();
+//         }
+//     });
+//     $('#close').on('click', function () {
+//         $('#container').removeClass('active');
+//     })
+//
+//     $('.nav div.nav-see').on('click', function () {
+//         $('div.nav-see').addClass('active');
+//         $('div.nav-search').removeClass('active');
+//
+//         $('#see-area').show();
+//         $('#search-area').hide();
+//     })
+//     $('.nav div.nav-search').on('click', function () {
+//         $('div.nav-see').removeClass('active');
+//         $('div.nav-search').addClass('active');
+//
+//         $('#see-area').hide();
+//         $('#search-area').show();
+//     })
+//
+//     $('#see-area').show();
+//     $('#search-area').hide();
+//
+//     if ($('#admin').length === 1) {
+//         showProduct(true);
+//     } else {
+//         showProduct();
+//     }
+// })
+//
+// function showProduct(isAdmin = false) {
+// // 1. GET /api/products 요청
+// // 2. #product-container(관심상품 목록), #search-result-box(검색결과 목록) 비우기
+// // 3. for 문 마다 addProductItem 함수 실행시키고 HTML 만들어서 #product-container 에 붙이기
+//     $.ajax({
+//         type: 'GET',
+//         url: isAdmin ? '/api/admin/products' : '/api/products',
+//         success: function (response) {
+//             $('#product-container').empty();
+//             $('#search-result-box').empty();
+//             for (let i = 0; i < response.length; i++) {
+//                 let product = response[i];
+//                 let tempHtml = addProductItem(product);
+//                 $('#product-container').append(tempHtml);
+//             }
+//         }
+//     })
+// }
+//
+// function addProductItem(product) {
+//     return `<div class="product-card" onclick="window.location.href='${product.link}'">
+// <div class="card-header">
+// <img src="${product.image}"
+// alt="">
+// </div>
+// <div class="card-body">
+// <div class="title">
+// ${product.title}
+// </div>
+// <div class="lprice">
+// <span>${numberWithCommas(product.lprice)}</span>원
+// </div>
+// <div class="isgood ${product.lprice > product.myprice ? 'none' : ''}">
+// 최저가
+// </div>
+// </div>
+// </div>`;
+// }
+//
+// function numberWithCommas(x) {
+//     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+// }
+//
+// function execSearch() {
+//     let query = $('#query').val();
+//     if (query == '') {
+//         alert('검색어를 입력해주세요');
+//         $('#query').focus();
+//         return;
+//     }
+//     $.ajax({
+//         type: 'GET',
+//         url: `/api/search?query=${query}`,
+//         success: function (response) {
+//             $('#search-result-box').empty();
+//             for (let i = 0; i < response.length; i++) {
+//                 let itemDto = response[i];
+//                 let tempHtml = addHTML(itemDto);
+//                 $('#search-result-box').append(tempHtml);
+//             }
+//         }
+//     })
+// }
+//
+// function addHTML(itemDto) {
+//     return `<div class="search-itemDto">
+// <div class="search-itemDto-left">
+// <img src="${itemDto.image}" alt="">
+// </div>
+// <div class="search-itemDto-center">
+// <div>${itemDto.title}</div>
+// <div class="price">
+// ${numberWithCommas(itemDto.lprice)}
+// <span class="unit">원</span>
+// </div>
+// </div>
+// <div class="search-itemDto-right">
+// <img src="images/icon-save.png" alt="" onclick='addProduct(${JSON.stringify(itemDto)})'>
+// </div>
+// </div>`
+// }
+//
+// function addProduct(itemDto) {
+//     $.ajax({
+//         type: "POST",
+//         url: '/api/products',
+//         contentType: "application/json",
+//         data: JSON.stringify(itemDto),
+//         success: function (response) {
+//             $('#container').addClass('active');
+//             targetId = response.id;
+//         }
+//     })
+// }
+//
+// function setMyprice() {
+//     let myprice = $('#myprice').val();
+//     if (myprice == '') {
+//         alert('올바른 가격을 입력해주세요');
+//         return;
+//     }
+//     $.ajax({
+//         type: "PUT",
+//         url: `/api/products/${targetId}`,
+//         contentType: "application/json",
+//         data: JSON.stringify({myprice: myprice}),
+//         success: function (response) {
+//             $('#container').removeClass('active');
+//             alert('성공적으로 등록되었습니다.');
+//             window.location.reload();
+//         }
+//     })
+// }

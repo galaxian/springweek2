@@ -30,10 +30,6 @@ public class UserService {
             throw new IllegalArgumentException("아이디는 3자 이상 대소문자와 숫자만 사용가능합니다");
         }
 
-        if (!requestDto.getPassword().matches("^{4,}$")) {
-            throw new IllegalArgumentException("비밀번호는 4자 이상만 사용가능합니다");
-        }
-
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
