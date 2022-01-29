@@ -1,0 +1,32 @@
+* {
+    font-family: 'Jua', cursive;
+}
+
+.row {
+    width: 900px;
+    margin: auto;
+}
+
+.title {
+    font-size: 60px;
+}
+
+#wordBox {
+    border: 15px solid #00d1b2;
+    border-radius: 16px;
+    padding-top: 18px;
+}
+
+.textarea {
+    margin: auto;
+    resize: none;
+}
+
+.input {
+    margin: auto;
+}
+
+.modal-content {
+    width: 1000px;
+    height: 550px;
+}

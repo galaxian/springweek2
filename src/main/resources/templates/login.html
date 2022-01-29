@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Webpage Title -->
+    <title>로그인</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!--구글폰트-->
+    <link href="https://fonts.googleapis.com/css?family=Jua:400" rel="stylesheet">
+
+
+    <script>
+        //로그인
+        function sign_in() {
+            let id = $("#input-id").val()
+            let pw = $("#input-password").val()
+
+            $.ajax({
+                type: "POST",
+                url: "/user/login",
+                data: {
+                    username: id,
+                    password: pw
+                },
+            success: function (response) {
+                if (response['result'] === 'success') {
+                    $.cookie('mytoken', response['token'], {path: '/'});
+                    window.location.replace("/")
+                } else {
+                    //로그인 안되면 메시지 띄우기
+                    alert(response['msg'])
+                }
+            }
+        });
+        }
+
+    </script>
+    <style>
+        * {
+            font-family: 'Jua', cursive;
+        }
+
+        .title {
+            font-size: 70px;
+        }
+
+        .subtitle {
+            font-size: 30px;
+            color: white;
+        }
+
+        .help {
+            font-size: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<section class="hero is-primary">
+    <div class="hero-body has-text-centered">
+        <p class="title">
+            두유노우?
+        </p>
+        <p class="subtitle">
+            친구와 함께 외우는 영어 단어장
+        </p>
+    </div>
+</section>
+<div class="box" style="max-width: 480px; margin: 100px auto auto auto;">
+    <div class="field">
+        <label class="label ">아이디</label>
+        <div class="field has-addons">
+            <div class="control" style="width: 100%;">
+                <input id="input-id" class="input" type="text" placeholder="아이디">
+            </div>
+        </div>
+    </div>
+
+    <div id="password" class="field">
+        <label class="label">비밀번호</label>
+        <div class="control">
+            <input id="input-password" class="input" type="password" placeholder="비밀번호">
+        </div>
+    </div>
+
+    <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+            <a id='login-box' class="button is-primary" onclick="sign_in()">
+                로그인
+            </a>
+        </p>
+    </div>
+    <p id="help-register" class="help">아직 계정이 없다면?</p>
+
+    <div class="field is-grouped is-grouped-centered">
+        <p class="control">
+            <a id='signup' class="button is-light" onclick="sign_up()">
+                회원가입
+            </a>
+        </p>
+    </div>
+</div>
+</body>
+</html>
