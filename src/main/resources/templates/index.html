@@ -18,6 +18,91 @@
     <!--구글폰트-->
     <link href="https://fonts.googleapis.com/css?family=Jua:400" rel="stylesheet">
 
+    <script>
+        $(document).ready(function () {
+            showPost();
+        })
+
+        function toggle_sign_up() {
+            $("#wordBox").toggleClass("is-hidden")
+            $(".box").toggleClass("is-hidden")
+        }
+
+        function showPost() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/posts',
+                success: function (response) {
+                    console.log(response)
+                    for (let i = 0; i < response.length; i++) {
+                        let post = response[i];
+                        let id = post['id'];
+                        let title = post['title'];
+                        let username = post['username'];
+                        let modifiedAt = post['modifiedAt'];
+                        let contents = post['contents'];
+                        addHTML(id, title, username, modifiedAt, contents);
+                    }
+                }
+            })
+        }
+
+        function selectPost(id) {
+            $.ajax({
+                type: 'GET',
+                url: `/api/posts/${id}`,
+                success: function (response) {
+                    let post = response;
+                    let id = post['id'];
+                    let title = post['title'];
+                    let username = post['username'];
+                    let modifiedAt = post['modifiedAt'];
+                    let contents = post['contents'];
+                    let temphtml = `<div class="box">
+                                    <article class="media">
+                                        <div class="media-content">
+                                            <div class="card">
+                                                <div class="card-content">
+                                                    <div class="media">
+                                                        <div class="media-left">
+                                                        </div>
+                                                        <div class="media-content">
+                                                            <p class="title is-4">${title}</p>
+                                                            <p class="subtitle is-6" style="text-align: right">${username}</p>
+                                                            <p class="subtitle is-6" style="text-align: right">${modifiedAt}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="content">
+                                                        ${contents}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <nav class="level is-mobile">
+                                                <div class="level-right">
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
+                                                           onclick="toggle_sign_up(), $('.box').remove()">돌아가기</a>
+                                                    </div>
+                                                </div>
+                                            </nav>
+                                        </div>
+                                    </article>
+                                </div>`;
+                    $("#selector").append(temphtml);
+                }
+            })
+        }
+
+        function addHTML(id, title, username, modifiedAt) {
+            let tempListHtml = `<tr id="${id}" onclick="selectPost(${id}), toggle_sign_up()">
+                                <th>${title}</th>
+                                <th>${username}</th>
+                                <th>${modifiedAt}</th>
+                                </tr>`;
+            $("#tbody").append(tempListHtml);
+        }
+    </script>
+
 
     <title> 스프링 2주차 과제 </title>
 </head>
@@ -27,14 +112,16 @@
         <p class="title">
             나만의블로그
         </p>
-        <a class="btn btn-outline-secondary" role="button">글 작성하기</a>
+        <a class="btn btn-outline-secondary" role="button" href="/page/uploads">글 작성하기</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/login">로그인</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
+        <form id="my_form" method="post" action="/user/logout">
+            <a id="logout-text" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
+        </form>
     </div>
 </section>
 
-
-<table class="table" id="wordBox">
+<table class="table is-active" id="wordBox">
     <thead>
     <tr>
         <th>제목</th>
@@ -46,4 +133,5 @@
     <tbody id="tbody">
     </tbody>
 </table>
+<div id="selector"></div>
 </body>

@@ -6,6 +6,7 @@ import com.springweek2.springweek2.repository.PostRepository;
 import com.springweek2.springweek2.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,7 +33,8 @@ public class PostController {
     }
 
     @GetMapping("/api/posts/{id}")
-    public Post selectPost(@PathVariable Long id) {
+    public Post selectPost(@PathVariable Long id, Model model) {
+        model.addAttribute("id", id);
         return postService.selectPost(id);
     }
 }
