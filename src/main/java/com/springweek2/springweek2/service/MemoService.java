@@ -21,7 +21,7 @@ public class MemoService {
     }
 
     public List<Memo> getMemo(Long id) {
-        return memoRepository.findAllByPostId(id);
+        return memoRepository.findAllByPostIdOrderByModifiedAtDesc(id);
     }
 
     public Long createMemo(MemoRequestDto memoRequestDto, String username, Long userId) {

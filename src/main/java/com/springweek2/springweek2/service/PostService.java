@@ -22,7 +22,7 @@ public class PostService {
     }
 
     public List<Post> getPost() {
-        return postRepository.findAll();
+        return postRepository.findAllByOrderByModifiedAtDesc();
     }
 
     public Post createPost(PostRequestDto requestDto, String username) {
