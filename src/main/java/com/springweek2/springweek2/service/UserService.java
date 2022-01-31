@@ -30,6 +30,9 @@ public class UserService {
         if (!username.matches("^[A-Za-z\\d]{3,}$")) {
             throw new IllegalArgumentException("아이디는 3자 이상 대소문자와 숫자만 사용가능합니다");
         }
+        if (requestDto.getPassword().contains(username)){
+            throw new IllegalArgumentException("비밀번호에 아이디는 포함할 수 없습니다.");
+        }
 
         Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
