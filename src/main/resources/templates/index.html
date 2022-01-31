@@ -58,6 +58,7 @@
                     let username = post['username'];
                     let modifiedAt = post['modifiedAt'];
                     let contents = post['contents'];
+                    console.log(id)
                     let temphtml = `<div class="box">
                                     <article class="media">
                                         <div class="media-content">
@@ -89,8 +90,95 @@
                                     </article>
                                 </div>`;
                     $("#selector").append(temphtml);
+                    getMemo(id)
                 }
             })
+        }
+
+        function getMemo(id) {
+            let temp = `<div class="box">
+                                    <article class="media">
+                                        <div class="media-content">
+                                            <div class="field">
+                                                <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                                                    <p>댓글</p>
+                                                    <textarea class="textarea" placeholder="작성내용" rows="3" id="memo-contents"></textarea>
+                                                </div>
+                                            </div>
+                                            <nav class="level is-mobile">
+                                                <div class="level-right">
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta" onclick="writeMemo(${id}, $('#memo-contents').val())">댓글 작성하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
+                                                           onclick="window.location.href='/'">돌아가기</a>
+                                                    </div>
+                                                </div>
+                                            </nav>
+                                        </div>
+                                    </article>
+                                </div>`
+            $("#selector").append(temp);
+            $.ajax({
+                type: 'GET',
+                url: `/api/memos/${id}`,
+                success: function (response) {
+                    for (let i = 0; i < response.length; i++) {
+                        let post = response[i];
+                        let id = post['id'];
+                        let username = post['username'];
+                        let modifiedAt = post['modifiedAt'];
+                        let contents = post['contents'];
+                        let postId = post['postId'];
+                        let temphtml = `<div class="box">
+                                    <article class="media">
+                                        <div class="media-content">
+                                            <div class="card">
+                                                <div class="card-content">
+                                                    <div class="media">
+                                                        <div class="media-left">
+                                                        </div>
+                                                        <div class="media-content">
+                                                            <p class="subtitle is-6" style="text-align: right">${username}</p>
+                                                            <p class="subtitle is-6" style="text-align: right">${modifiedAt}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="content">
+                                                        ${contents}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <nav class="level is-mobile">
+                                                <div class="level-right">
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
+                                                           onclick="toggle_sign_up(), $('.box').remove()">돌아가기</a>
+                                                    </div>
+                                                </div>
+                                            </nav>
+                                        </div>
+                                    </article>
+                                </div>`;
+                        $("#selector").append(temphtml);
+                    }
+                }
+            })
+        }
+
+        function writeMemo(id, contents) {
+            let data = {"postId": id, "contents": contents};
+
+            $.ajax({
+                type: "POST",
+                url: "/api/memos",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('댓글이 성공적으로 작성되었습니다.');
+                    window.location.reload();
+                }
+            });
         }
 
         function addHTML(id, title, username, modifiedAt) {
