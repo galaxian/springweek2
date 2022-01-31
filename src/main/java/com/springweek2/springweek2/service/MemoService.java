@@ -7,6 +7,7 @@ import com.springweek2.springweek2.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -35,5 +36,26 @@ public class MemoService {
             return id;
         }
         return (long)-1;
+    }
+
+    @Transactional
+    public Long updateMemo(Long id, MemoRequestDto requestDto, UserDetailsImpl userDetails) {
+        if (userDetails.getUser().getUsername().equals(memoRepository.getById(id).getUsername())) {
+            Memo memo = memoRepository.findById(id).orElseThrow(
+                    () -> new NullPointerException("선택한 댓글이 존재하지 않습니다.")
+            );
+            String contents = requestDto.getContents();
+            memo.setContents(contents);
+            memoRepository.save(memo);
+            return id;
+        }
+        return (long)-1;
+    }
+
+    public Memo ModalMemo(Long id) {
+        Memo memo = memoRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("찾는 댓글이 존재하지 않습니다.")
+        );
+        return memo;
     }
 }

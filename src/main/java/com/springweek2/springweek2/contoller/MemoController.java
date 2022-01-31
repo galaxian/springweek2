@@ -1,6 +1,7 @@
 package com.springweek2.springweek2.contoller;
 
 import com.springweek2.springweek2.dto.MemoRequestDto;
+import com.springweek2.springweek2.dto.PostRequestDto;
 import com.springweek2.springweek2.model.Memo;
 import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.security.UserDetailsImpl;
@@ -34,6 +35,20 @@ public class MemoController {
         String username = userDetail.getUser().getUsername();
         Long userId = userDetail.getUser().getId();
         return memoService.createMemo(memoRequestDto, username, userId);
+    }
+
+    @Secured(value = UserRoleEnum.Authority.USER)
+    @GetMapping("api/memos/modals/{id}")
+    public Memo ModalMemo(@PathVariable Long id) {
+        return memoService.ModalMemo(id);
+    }
+
+    @Secured(value = UserRoleEnum.Authority.USER)
+    @PutMapping("api/memos/{id}")
+    public Long updateMemo(@PathVariable Long id,
+                           @RequestBody MemoRequestDto requestDto,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memoService.updateMemo(id, requestDto, userDetails);
     }
 
     @Secured(value = UserRoleEnum.Authority.USER)
