@@ -32,4 +32,10 @@ public class Post extends Timestamped{
         this.contents = requestDto.getContents();
     }
 
+    public Post(PostRequestDto requestDto, String username) {
+        this.title = requestDto.getTitle();
+        this.username = username;
+        this.contents = requestDto.getContents();
+    }
+
 }

@@ -1,8 +1,10 @@
 package com.springweek2.springweek2.service;
 
 import com.springweek2.springweek2.dto.PostRequestDto;
+import com.springweek2.springweek2.dto.SignupRequestDto;
 import com.springweek2.springweek2.model.Post;
 import com.springweek2.springweek2.repository.PostRepository;
+import com.springweek2.springweek2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,18 +15,20 @@ import java.util.List;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
     }
 
     public List<Post> getPost() {
         return postRepository.findAll();
     }
 
-    public Post createPost(PostRequestDto requestDto) {
-        Post post = new Post(requestDto);
+    public Post createPost(PostRequestDto requestDto, String username) {
+        Post post = new Post(requestDto, username);
         postRepository.save(post);
         return post;
     }
