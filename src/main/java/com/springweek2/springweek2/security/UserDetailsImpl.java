@@ -2,8 +2,10 @@ package com.springweek2.springweek2.security;
 
 import com.springweek2.springweek2.model.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EmptyStackException;
@@ -22,7 +24,11 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        SimpleGrantedAuthority adminAuthority = new SimpleGrantedAuthority("ROLE_USER");
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(adminAuthority);
+
+        return authorities;
     }
 
     @Override

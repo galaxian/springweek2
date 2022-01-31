@@ -2,9 +2,11 @@ package com.springweek2.springweek2.contoller;
 
 import com.springweek2.springweek2.dto.MemoRequestDto;
 import com.springweek2.springweek2.model.Memo;
+import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.security.UserDetailsImpl;
 import com.springweek2.springweek2.service.MemoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,10 +27,19 @@ public class MemoController {
         return memoService.getMemo(id);
     }
 
+    @Secured(value = UserRoleEnum.Authority.USER)
     @PostMapping("/api/memos")
-    public Memo createMemo(@RequestBody MemoRequestDto memoRequestDto,
+    public Long createMemo(@RequestBody MemoRequestDto memoRequestDto,
                            @AuthenticationPrincipal UserDetailsImpl userDetail) {
         String username = userDetail.getUser().getUsername();
-        return memoService.createMemo(memoRequestDto, username);
+        Long userId = userDetail.getUser().getId();
+        return memoService.createMemo(memoRequestDto, username, userId);
+    }
+
+    @Secured(value = UserRoleEnum.Authority.USER)
+    @DeleteMapping("/api/memos/{id}")
+    public Long deleteMemo(@PathVariable Long id,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return memoService.deleteMemo(id, userDetails);
     }
 }

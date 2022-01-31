@@ -153,6 +153,14 @@
                                                 <div class="level-right">
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
+                                                           onclick="">수정하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
+                                                           onclick="deleteMemo(${id})">삭제하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
                                                            onclick="toggle_sign_up(), $('.box').remove()">돌아가기</a>
                                                     </div>
                                                 </div>
@@ -175,7 +183,10 @@
                 contentType: "application/json", // JSON 형식으로 전달함을 알리기
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert('댓글이 성공적으로 작성되었습니다.');
+                    console.log(response)
+                    if (typeof(response) === typeof("sdsd"))
+                        alert('로그인 후 이용가능합니다.');
+                    else alert('댓글이 성공적으로 작성되었습니다.');
                     window.location.reload();
                 }
             });
@@ -188,6 +199,20 @@
                                 <th>${modifiedAt}</th>
                                 </tr>`;
             $("#tbody").append(tempListHtml);
+        }
+
+        function deleteMemo(id) {
+            $.ajax({
+                type: "DELETE",
+                url: `/api/memos/${id}`,
+                success: function (response) {
+                    if (response === -1)
+                        alert('본인이 쓴 댓글이 아닙니다.');
+                    else
+                        alert('게시글이 삭제되었습니다.');
+                    window.location.reload();
+                }
+            });
         }
     </script>
 

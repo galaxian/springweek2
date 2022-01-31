@@ -2,6 +2,7 @@ package com.springweek2.springweek2.service;
 
 import com.springweek2.springweek2.dto.SignupRequestDto;
 import com.springweek2.springweek2.model.User;
+import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,8 +41,9 @@ public class UserService {
         if (!requestDto.getPassword().equals(checkPassword)) {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요");
         }
+        UserRoleEnum role = UserRoleEnum.USER;
 
-        User user = new User(username, password);
+        User user = new User(username, password, role);
         userRepository.save(user);
     }
 }

@@ -25,14 +25,18 @@ public class Memo extends Timestamped{
     @Column(nullable = false)
     private Long postId;
 
+    @Column(nullable = false)
+    private Long userId;
+
     public Memo(MemoRequestDto memoRequestDto) {
         this.postId = memoRequestDto.getPostId();
         this.contents = memoRequestDto.getContents();
     }
 
-    public Memo(MemoRequestDto memoRequestDto, String username) {
+    public Memo(MemoRequestDto memoRequestDto, String username, Long userId) {
         this.postId = memoRequestDto.getPostId();
         this.username = username;
         this.contents = memoRequestDto.getContents();
+        this.userId = userId;
     }
 }
