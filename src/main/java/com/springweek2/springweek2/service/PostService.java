@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -35,6 +36,19 @@ public class PostService {
         return postRepository.findById(id).orElseThrow(
                 () -> new NullPointerException("선택한 게시글이 존재하지 않습니다.")
         );
+    }
+
+    @Transactional
+    public Long updatePost(Long id, PostRequestDto requestDto) {
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("선택한 게시글이 존재하지 않습니다.")
+        );
+        String contents = requestDto.getContents();
+        String title = requestDto.getTitle();
+        post.setContents(contents);
+        post.setTitle(title);
+        postRepository.save(post);
+        return id;
     }
 
     public Long deletePost(Long id) {

@@ -104,7 +104,7 @@
                     let modifiedAt = post['modifiedAt'];
                     let contents = post['contents'];
                     console.log(id)
-                    let temphtml = `<div class="box">
+                    let temphtml = `<div class="box" id="selectbox">
                                     <article class="media">
                                         <div class="media-content">
                                             <div class="card">
@@ -131,7 +131,35 @@
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
+                                                           onclick="$('#updateBox${id}').show(), $('#selectbox').hide(), $('#memowrite').hide()">수정하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
                                                            onclick="window.location.reload()">돌아가기</a>
+                                                    </div>
+                                                </div>
+                                            </nav>
+                                        </div>
+                                    </article>
+                                </div>
+                                <div class="box" id="updateBox${id}">
+                                    <article class="media">
+                                        <div class="media-content">
+                                            <div class="field">
+                                                <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                                                    <p>제목</p>
+                                                    <textarea class="textarea" placeholder="제목" rows="1" id="update-post-title${id}"></textarea>
+                                                    <p>게시글</p>
+                                                    <textarea class="textarea" placeholder="작성내용" rows="10" id="update-post-contents${id}"></textarea>
+                                                </div>
+                                            </div>
+                                            <nav class="level is-mobile">
+                                                <div class="level-right">
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta" onclick="updatePost(${id})">게시글 수정하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a id="back" class="button is-sparta is-outlined" onclick="$('#updateBox${id}').hide(), $('#selectbox').show(), $('#memowrite').show()">돌아가기</a>
                                                     </div>
                                                 </div>
                                             </nav>
@@ -139,6 +167,8 @@
                                     </article>
                                 </div>`;
                     $("#selector").append(temphtml);
+                    $(`#updateBox${id}`).hide()
+                    $('#selectbox').show()
                     getMemo(id)
                 }
             })
@@ -304,6 +334,23 @@
                 url: `/api/posts/${id}`,
                 success: function (response) {
                     alert('게시글이 삭제되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        function updatePost(id) {
+            let contents = $(`#update-post-contents${id}`).val();
+            let title = $(`#update-post-title${id}`).val();
+
+            let data = {"title": title, "contents": contents};
+            $.ajax({
+                type: "PUT",
+                url: `/api/posts/${id}`,
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('댓글이 성공적으로 수정되었습니다.');
                     window.location.reload();
                 }
             });
