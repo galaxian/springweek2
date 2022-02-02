@@ -42,4 +42,9 @@ public class PostController {
         model.addAttribute("id", id);
         return postService.selectPost(id);
     }
+
+    @DeleteMapping("api/posts/{id}")
+    public Long deletePost(@PathVariable Long id) {
+        return postService.deletePost(id);
+    }
 }

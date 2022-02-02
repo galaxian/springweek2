@@ -127,6 +127,10 @@
                                                 <div class="level-right">
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
+                                                           onclick="deletePost(${id})">삭제하기</a>
+                                                    </div>
+                                                    <div class="level-item">
+                                                        <a class="button is-sparta is-outlined"
                                                            onclick="window.location.reload()">돌아가기</a>
                                                     </div>
                                                 </div>
@@ -289,6 +293,17 @@
                         alert('본인이 쓴 댓글이 아닙니다.');
                     else
                         alert('게시글이 삭제되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        function deletePost(id) {
+            $.ajax({
+                type: "DELETE",
+                url: `/api/posts/${id}`,
+                success: function (response) {
+                    alert('게시글이 삭제되었습니다.');
                     window.location.reload();
                 }
             });
