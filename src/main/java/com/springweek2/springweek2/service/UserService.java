@@ -9,8 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class UserService {
@@ -24,7 +22,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void resisterUser(SignupRequestDto requestDto) {
+    public String resisterUser(SignupRequestDto requestDto) {
         String username = requestDto.getUsername();
 
         if (!username.matches("^[A-Za-z\\d]{3,}$")) {
@@ -42,11 +40,12 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         String checkPassword = requestDto.getCheckPassword();
         if (!requestDto.getPassword().equals(checkPassword)) {
-            throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요");
+            throw new IllegalArgumentException("비밀번호와 비밀번호 확인의 값이 일치하지 않습니다.");
         }
         UserRoleEnum role = UserRoleEnum.USER;
 
         User user = new User(username, password, role);
         userRepository.save(user);
+        return "success";
     }
 }
