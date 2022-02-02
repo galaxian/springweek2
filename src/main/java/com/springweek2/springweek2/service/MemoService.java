@@ -25,6 +25,8 @@ public class MemoService {
     }
 
     public Long createMemo(MemoRequestDto memoRequestDto, String username, Long userId) {
+        if(memoRequestDto.getContents().length() == 0)
+            return 0L;
         Memo memo = new Memo(memoRequestDto, username, userId);
         memoRepository.save(memo);
         return memo.getId();
@@ -41,6 +43,8 @@ public class MemoService {
     @Transactional
     public Long updateMemo(Long id, MemoRequestDto requestDto, UserDetailsImpl userDetails) {
         if (userDetails.getUser().getUsername().equals(memoRepository.getById(id).getUsername())) {
+            if(requestDto.getContents().length() == 0)
+                return 0L;
             Memo memo = memoRepository.findById(id).orElseThrow(
                     () -> new NullPointerException("선택한 댓글이 존재하지 않습니다.")
             );

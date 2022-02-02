@@ -2,10 +2,13 @@ package com.springweek2.springweek2.contoller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.springweek2.springweek2.dto.SignupRequestDto;
+import com.springweek2.springweek2.security.UserDetailsImpl;
 import com.springweek2.springweek2.service.KakaoUserService;
 import com.springweek2.springweek2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,13 +32,19 @@ public class UserController {
     }
 
     @GetMapping("/user/login")
-    public String login() {
-        return "login";
+    public String login(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if(userDetails != null){
+            return "index";
+        } else
+            return "login";
     }
 
     @GetMapping("/user/signup")
-    public String signup() {
-        return "signup";
+    public String signup(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if(userDetails != null){
+            return "index";
+        } else
+            return "signup";
     }
 
     @GetMapping("/user/kakao/callback")
