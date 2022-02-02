@@ -21,11 +21,47 @@
     <script>
         $(document).ready(function () {
             showPost();
-        })
+            $('#goHome').on('click', function () {
+                $('#uploadPost').addClass('active');
+                $('#goHome').removeClass('active');
+                $('#uploadBox').hide();
+                $('#container').show();
+            })
+
+            $('#uploadPost').on('click', function () {
+                $('#uploadPost').removeClass('active');
+                $('#goHome').addClass('active');
+
+                $('#uploadBox').show();
+                $('#container').hide();
+            })
+
+                $('#uploadBox').hide();
+                $('#container').show();
+
+        }
+        )
 
         function toggle_sign_up() {
-            $("#wordBox").toggleClass("is-hidden")
-            $(".box").toggleClass("is-hidden")
+            $("#wordBox").hide()
+        }
+
+        function writePost() {
+            let title = $("#post-title").val();
+            let contents = $("#post-contents").val();
+
+            let data = {"title": title, "contents": contents};
+
+            $.ajax({
+                type: "POST",
+                url: "/api/posts",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('게시글이 성공적으로 작성되었습니다.');
+                    window.location.reload();
+                }
+            });
         }
 
         function showPost() {
@@ -45,6 +81,15 @@
                     }
                 }
             })
+        }
+
+        function addHTML(id, title, username, modifiedAt) {
+            let tempListHtml = `<tr id="${id}" onclick="selectPost(${id}), toggle_sign_up()">
+                                <th>${title}</th>
+                                <th>${username}</th>
+                                <th>${modifiedAt}</th>
+                                </tr>`;
+            $("#tbody").append(tempListHtml);
         }
 
         function selectPost(id) {
@@ -82,7 +127,7 @@
                                                 <div class="level-right">
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
-                                                           onclick="toggle_sign_up(), $('.box').remove()">돌아가기</a>
+                                                           onclick="window.location.reload()">돌아가기</a>
                                                     </div>
                                                 </div>
                                             </nav>
@@ -96,7 +141,7 @@
         }
 
         function getMemo(id) {
-            let temp = `<div class="box">
+            let temp = `<div id="memowrite" class="box">
                                     <article class="media">
                                         <div class="media-content">
                                             <div class="field">
@@ -131,7 +176,7 @@
                         let modifiedAt = post['modifiedAt'];
                         let contents = post['contents'];
                         let postId = post['postId'];
-                        let temphtml = `<div class="box" id="${id}">
+                        let temphtml = `<div class="memoboxes" id="memoboxes${id}">
                                     <article class="media">
                                         <div class="media-content">
                                             <div class="card">
@@ -152,8 +197,7 @@
                                             <nav class="level is-mobile">
                                                 <div class="level-right">
                                                     <div class="level-item">
-                                                        <a class="button is-sparta is-outlined"
-                                                           onclick="updateState(${id})">수정하기</a>
+                                                        <a id="updateWindow" class="button is-sparta is-outlined" onclick="$('#memobox${id}').show(), $('#memoboxes${id}').hide()">수정하기</a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
@@ -167,8 +211,33 @@
                                             </nav>
                                         </div>
                                     </article>
-                                </div>`;
-                        $("#selector").append(temphtml);
+                                </div>
+                                        <div class="memobox" id="memobox${id}">
+                                            <article class="media">
+                                                <div class="media-content">
+                                                    <div class="field">
+                                                        <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                                                            <p>댓글</p>
+                                                            <textarea class="textarea" placeholder="작성내용" rows="3" id="update-contents${id}">${contents}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <nav class="level is-mobile">
+                                                        <div class="level-right">
+                                                            <div class="level-item">
+                                                                <a id="updateMemo" class="button is-sparta" onclick="updateMemo(${id})">게시글 수정하기</a>
+                                                            </div>
+                                                            <div class="level-item">
+                                                                <a class="button is-sparta is-outlined"
+                                                                   onclick='$("#update").removeClass("is-active")'>돌아가기</a>
+                                                            </div>
+                                                        </div>
+                                                    </nav>
+                                                </div>
+                                            </article>
+                                        </div>`;
+                        $("#change").append(temphtml);
+                        $(`#memobox${id}`).hide()
+                        $(`#memoboxes${id}`).show()
                     }
                 }
             })
@@ -192,61 +261,8 @@
             });
         }
 
-        function addHTML(id, title, username, modifiedAt) {
-            let tempListHtml = `<tr id="${id}" onclick="selectPost(${id}), toggle_sign_up()">
-                                <th>${title}</th>
-                                <th>${username}</th>
-                                <th>${modifiedAt}</th>
-                                </tr>`;
-            $("#tbody").append(tempListHtml);
-        }
-
-        function updateState(id) {
-            $("#update").addClass("is-active");
-            $.ajax({
-                type: 'GET',
-                url: `/api/memos/modals/${id}`,
-                success: function (response) {
-                    let post = response;
-                    let id = post['id']
-                    let contents = post["contents"];
-                    let tempHtml = `<div class="modal" id="update">
-                                    <div class="modal-background" onclick='$("#update").removeClass("is-active")'></div>
-                                    <div class="modal-content">
-                                        <div class="box">
-                                            <article class="media">
-                                                <div class="media-content">
-                                                    <div class="field">
-                                                        <div class="row gx-4 gx-lg-5 align-items-center my-5">
-                                                            <p>댓글</p>
-                                                            <textarea class="textarea" placeholder="작성내용" rows="3" id="update-contents">${contents}</textarea>
-                                                        </div>
-                                                    </div>
-                                                    <nav class="level is-mobile">
-                                                        <div class="level-right">
-                                                            <div class="level-item">
-                                                                <a class="button is-sparta" onclick="updateMemo(${id})">게시글 수정하기</a>
-                                                            </div>
-                                                            <div class="level-item">
-                                                                <a class="button is-sparta is-outlined"
-                                                                   onclick='$("#update").removeClass("is-active")'>돌아가기</a>
-                                                            </div>
-                                                        </div>
-                                                    </nav>
-                                                </div>
-                                            </article>
-                                        </div>
-                                    </div>
-                                    <button class="modal-close is-large" aria-label="close"
-                                            onclick='$("#update").removeClass("is-active")'></button>
-                                </div>`;
-                    $("#change").append(tempHtml);
-                }
-            })
-        }
-
         function updateMemo(id) {
-            let contents = $("#update-contents").val();
+            let contents = $(`#update-contents${id}`).val();
 
             let data = {"contents": contents};
             $.ajax({
@@ -288,7 +304,7 @@
         <p class="title">
             나만의블로그
         </p>
-        <a class="btn btn-outline-secondary" role="button" href="/page/uploads">글 작성하기</a>
+        <a id="uploadPost" class="btn btn-outline-secondary active" role="button">글 작성하기</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/login">로그인</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
         <form id="my_form" method="post" action="/user/logout">
@@ -296,19 +312,44 @@
         </form>
     </div>
 </section>
+<div id="container">
+    <table class="table is-active" id="wordBox">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성날짜</th>
+        </tr>
+        </thead>
 
-<table class="table is-active" id="wordBox">
-    <thead>
-    <tr>
-        <th>제목</th>
-        <th>작성자</th>
-        <th>작성날짜</th>
-    </tr>
-    </thead>
-
-    <tbody id="tbody">
-    </tbody>
-</table>
-<div id="change"></div>
-<div id="selector"></div>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+    <div id="selector"></div>
+    <div id="change"></div>
+</div>
+<div class="box" id="uploadBox">
+    <article class="media">
+        <div class="media-content">
+            <div class="field">
+                <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                    <p>제목</p>
+                    <textarea class="textarea" placeholder="제목" rows="1" id="post-title"></textarea>
+                    <p>게시글</p>
+                    <textarea class="textarea" placeholder="작성내용" rows="10" id="post-contents"></textarea>
+                </div>
+            </div>
+            <nav class="level is-mobile">
+                <div class="level-right">
+                    <div class="level-item">
+                        <a class="button is-sparta" onclick="writePost()">게시글 작성하기</a>
+                    </div>
+                    <div class="level-item">
+                        <a id="goHome" class="button is-sparta is-outlined">돌아가기</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </article>
+</div>
 </body>
