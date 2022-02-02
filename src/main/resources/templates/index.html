@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css?family=Jua:400" rel="stylesheet">
 
     <script>
+        let isAdmin
         $(document).ready(function () {
             showPost();
             $('#goHome').on('click', function () {
@@ -39,14 +40,57 @@
                 $('#uploadBox').hide();
                 $('#container').show();
 
+                isAdmin = $('#admin').length === 1;
+
         }
         )
+
+        function user(isAdmin , id) {
+            console.log(isAdmin)
+            if (isAdmin === true) {
+                $(`#updateBox${id}`).show()
+                $('#selectbox').hide()
+                $('#memowrite').hide()
+            } else {
+                alert("로그인 후 이용가능합니다.")
+                window.location.href = "/user/login"
+            }
+        }
+        
+        function userdelpost(isAdmin, postId) {
+            if (isAdmin === true)
+                deletePost(`${postId}`)
+            else {
+                alert("로그인 후 이용가능합니다.")
+                window.location.href = "/user/login"
+            }
+        }
+
+        function userdelmemo(isAdmin, id) {
+            if(isAdmin === true)
+                deleteMemo(id)
+            else {
+                alert("로그인 후 이용가능합니다.")
+                window.location.href = "/user/login"
+            }
+        }
+
+        function userupdatememo(isAdmin, id) {
+            if(isAdmin === true){
+                $(`#memobox${id}`).show()
+                $(`#memoboxes${id}`).hide()
+            }
+            else {
+                alert("로그인 후 이용가능합니다.")
+                window.location.href = "/user/login"
+            }
+        }
 
         function toggle_sign_up() {
             $("#wordBox").hide()
         }
 
-        function writePost() {
+        function writePost(isAdmin) {
             let title = $("#post-title").val();
             let contents = $("#post-contents").val();
 
@@ -58,8 +102,15 @@
                 contentType: "application/json", // JSON 형식으로 전달함을 알리기
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert('게시글이 성공적으로 작성되었습니다.');
-                    window.location.reload();
+                    console.log(response)
+                    if (response === null) {
+                        alert('로그인 후 이용가능합니다.');
+                        window.location.href="/login"
+                    }
+                    else {
+                        alert('게시글이 성공적으로 작성되었습니다.');
+                        window.location.reload();
+                    }
                 }
             });
         }
@@ -72,19 +123,19 @@
                     console.log(response)
                     for (let i = 0; i < response.length; i++) {
                         let post = response[i];
-                        let id = post['id'];
+                        let postId = post['id'];
                         let title = post['title'];
                         let username = post['username'];
                         let modifiedAt = post['modifiedAt'];
                         let contents = post['contents'];
-                        addHTML(id, title, username, modifiedAt, contents);
+                        addHTML(postId, title, username, modifiedAt, contents);
                     }
                 }
             })
         }
 
-        function addHTML(id, title, username, modifiedAt) {
-            let tempListHtml = `<tr id="${id}" onclick="selectPost(${id}), toggle_sign_up()">
+        function addHTML(postId, title, username, modifiedAt) {
+            let tempListHtml = `<tr id="${postId}" onclick="selectPost(${postId}), toggle_sign_up()">
                                 <th>${title}</th>
                                 <th>${username}</th>
                                 <th>${modifiedAt}</th>
@@ -92,18 +143,16 @@
             $("#tbody").append(tempListHtml);
         }
 
-        function selectPost(id) {
+        function selectPost(postId) {
             $.ajax({
                 type: 'GET',
-                url: `/api/posts/${id}`,
+                url: `/api/posts/${postId}`,
                 success: function (response) {
                     let post = response;
-                    let id = post['id'];
                     let title = post['title'];
                     let username = post['username'];
                     let modifiedAt = post['modifiedAt'];
                     let contents = post['contents'];
-                    console.log(id)
                     let temphtml = `<div class="box" id="selectbox">
                                     <article class="media">
                                         <div class="media-content">
@@ -127,11 +176,11 @@
                                                 <div class="level-right">
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
-                                                           onclick="deletePost(${id})">삭제하기</a>
+                                                           onclick="userdelpost(isAdmin, ${postId})">삭제하기</a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
-                                                           onclick="$('#updateBox${id}').show(), $('#selectbox').hide(), $('#memowrite').hide()">수정하기</a>
+                                                           onclick="user(isAdmin, ${postId})">수정하기</a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
@@ -142,24 +191,24 @@
                                         </div>
                                     </article>
                                 </div>
-                                <div class="box" id="updateBox${id}">
+                                <div class="box" id="updateBox${postId}">
                                     <article class="media">
                                         <div class="media-content">
                                             <div class="field">
                                                 <div class="row gx-4 gx-lg-5 align-items-center my-5">
                                                     <p>제목</p>
-                                                    <textarea class="textarea" placeholder="제목" rows="1" id="update-post-title${id}"></textarea>
+                                                    <textarea class="textarea" placeholder="제목" rows="1" id="update-post-title${postId}"></textarea>
                                                     <p>게시글</p>
-                                                    <textarea class="textarea" placeholder="작성내용" rows="10" id="update-post-contents${id}"></textarea>
+                                                    <textarea class="textarea" placeholder="작성내용" rows="10" id="update-post-contents${postId}"></textarea>
                                                 </div>
                                             </div>
                                             <nav class="level is-mobile">
                                                 <div class="level-right">
                                                     <div class="level-item">
-                                                        <a class="button is-sparta" onclick="updatePost(${id})">게시글 수정하기</a>
+                                                        <a class="button is-sparta" onclick="updatePost(${postId})">게시글 수정하기</a>
                                                     </div>
                                                     <div class="level-item">
-                                                        <a id="back" class="button is-sparta is-outlined" onclick="$('#updateBox${id}').hide(), $('#selectbox').show(), $('#memowrite').show()">돌아가기</a>
+                                                        <a id="back" class="button is-sparta is-outlined" onclick="$('#updateBox${postId}').hide(), $('#selectbox').show(), $('#memowrite').show()">돌아가기</a>
                                                     </div>
                                                 </div>
                                             </nav>
@@ -167,9 +216,9 @@
                                     </article>
                                 </div>`;
                     $("#selector").append(temphtml);
-                    $(`#updateBox${id}`).hide()
+                    $(`#updateBox${postId}`).hide()
                     $('#selectbox').show()
-                    getMemo(id)
+                    getMemo(postId)
                 }
             })
         }
@@ -231,11 +280,11 @@
                                             <nav class="level is-mobile">
                                                 <div class="level-right">
                                                     <div class="level-item">
-                                                        <a id="updateWindow" class="button is-sparta is-outlined" onclick="$('#memobox${id}').show(), $('#memoboxes${id}').hide()">수정하기</a>
+                                                        <a id="updateWindow" class="button is-sparta is-outlined" onclick="userupdatememo(isAdmin, ${id})">수정하기</a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
-                                                           onclick="deleteMemo(${id})">삭제하기</a>
+                                                           onclick="userdelmemo(isAdmin, ${id})">삭제하기</a>
                                                     </div>
                                                     <div class="level-item">
                                                         <a class="button is-sparta is-outlined"
@@ -322,7 +371,7 @@
                     if (response === -1)
                         alert('본인이 쓴 댓글이 아닙니다.');
                     else
-                        alert('게시글이 삭제되었습니다.');
+                        alert('댓글이 삭제되었습니다.');
                     window.location.reload();
                 }
             });
@@ -333,7 +382,10 @@
                 type: "DELETE",
                 url: `/api/posts/${id}`,
                 success: function (response) {
-                    alert('게시글이 삭제되었습니다.');
+                    if (response === -1)
+                        alert('본인이 쓴 게시글이 아닙니다.');
+                    else
+                        alert('게시글이 삭제되었습니다.');
                     window.location.reload();
                 }
             });
@@ -350,7 +402,10 @@
                 contentType: "application/json", // JSON 형식으로 전달함을 알리기
                 data: JSON.stringify(data),
                 success: function (response) {
-                    alert('댓글이 성공적으로 수정되었습니다.');
+                    if (response === -1)
+                        alert('본인이 쓴 게시글이 아닙니다.');
+                    else
+                        alert('게시글이 수정되었습니다.');
                     window.location.reload();
                 }
             });
@@ -366,7 +421,8 @@
         <p class="title">
             나만의블로그
         </p>
-        <a id="uploadPost" class="btn btn-outline-secondary active" role="button">글 작성하기</a>
+        <a th:if="${admin_role}" id="uploadPost" class="btn btn-outline-secondary active" role="button">글 작성하기</a>
+        <a th:unless="${admin_role}" class="btn btn-outline-secondary active" role="button" onclick="alert('로그인 후 이용가능합니다.'), window.location.href='/user/login'">글 작성하기</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/login">로그인</a>
         <a class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
         <form id="my_form" method="post" action="/user/logout">
@@ -390,28 +446,30 @@
     <div id="selector"></div>
     <div id="change"></div>
 </div>
-<div class="box" id="uploadBox">
-    <article class="media">
-        <div class="media-content">
-            <div class="field">
-                <div class="row gx-4 gx-lg-5 align-items-center my-5">
-                    <p>제목</p>
-                    <textarea class="textarea" placeholder="제목" rows="1" id="post-title"></textarea>
-                    <p>게시글</p>
-                    <textarea class="textarea" placeholder="작성내용" rows="10" id="post-contents"></textarea>
+<div th:if="${admin_role}" id="admin">
+    <div class="box" id="uploadBox">
+        <article class="media">
+            <div class="media-content">
+                <div class="field">
+                    <div class="row gx-4 gx-lg-5 align-items-center my-5">
+                        <p>제목</p>
+                        <textarea class="textarea" placeholder="제목" rows="1" id="post-title"></textarea>
+                        <p>게시글</p>
+                        <textarea class="textarea" placeholder="작성내용" rows="10" id="post-contents"></textarea>
+                    </div>
                 </div>
+                <nav class="level is-mobile">
+                    <div class="level-right">
+                        <div class="level-item">
+                            <a class="button is-sparta" onclick="writePost(isAdmin)">게시글 작성하기</a>
+                        </div>
+                        <div class="level-item">
+                            <a id="goHome" class="button is-sparta is-outlined">돌아가기</a>
+                        </div>
+                    </div>
+                </nav>
             </div>
-            <nav class="level is-mobile">
-                <div class="level-right">
-                    <div class="level-item">
-                        <a class="button is-sparta" onclick="writePost()">게시글 작성하기</a>
-                    </div>
-                    <div class="level-item">
-                        <a id="goHome" class="button is-sparta is-outlined">돌아가기</a>
-                    </div>
-                </div>
-            </nav>
-        </div>
-    </article>
+        </article>
+    </div>
 </div>
 </body>

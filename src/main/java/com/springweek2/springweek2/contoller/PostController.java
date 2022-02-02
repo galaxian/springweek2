@@ -2,10 +2,12 @@ package com.springweek2.springweek2.contoller;
 
 import com.springweek2.springweek2.dto.PostRequestDto;
 import com.springweek2.springweek2.model.Post;
+import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.repository.PostRepository;
 import com.springweek2.springweek2.security.UserDetailsImpl;
 import com.springweek2.springweek2.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,13 +45,16 @@ public class PostController {
         return postService.selectPost(id);
     }
 
+    @Secured(value = UserRoleEnum.Authority.USER)
     @PutMapping("api/posts/{id}")
-    public Long updatePost(@PathVariable Long id, @RequestBody PostRequestDto requestDto) {
-        return postService.updatePost(id, requestDto);
+    public Long updatePost(@PathVariable Long id,
+                           @RequestBody PostRequestDto requestDto,
+                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.updatePost(id, requestDto, userDetails);
     }
 
     @DeleteMapping("api/posts/{id}")
-    public Long deletePost(@PathVariable Long id) {
-        return postService.deletePost(id);
+    public Long deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return postService.deletePost(id, userDetails);
     }
 }
