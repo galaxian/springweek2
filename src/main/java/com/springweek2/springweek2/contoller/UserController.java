@@ -33,18 +33,12 @@ public class UserController {
 
     @GetMapping("/user/login")
     public String login(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if(userDetails != null){
-            return "index";
-        } else
-            return "login";
+        return userService.login(userDetails);
     }
 
     @GetMapping("/user/signup")
     public String signup(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if(userDetails != null){
-            return "index";
-        } else
-            return "signup";
+        return userService.signup(userDetails);
     }
 
     @GetMapping("/user/kakao/callback")

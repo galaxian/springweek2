@@ -4,6 +4,7 @@ import com.springweek2.springweek2.dto.SignupRequestDto;
 import com.springweek2.springweek2.model.User;
 import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.repository.UserRepository;
+import com.springweek2.springweek2.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,5 +52,20 @@ public class UserService {
         User user = new User(username, password, role);
         userRepository.save(user);
         return "success";
+    }
+
+    public String signup(UserDetailsImpl userDetails) {
+        if(userDetails != null) {
+            return "redirect:/";
+        } else {
+            return "signup";
+        }
+    }
+
+    public String login(UserDetailsImpl userDetails) {
+        if(userDetails != null){
+            return "redirect:/";
+        } else
+            return "login";
     }
 }

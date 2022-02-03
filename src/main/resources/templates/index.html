@@ -433,8 +433,10 @@
         </p>
         <a th:if="${admin_role}" id="uploadPost" class="btn btn-outline-secondary active" role="button">글 작성하기</a>
         <a th:unless="${admin_role}" class="btn btn-outline-secondary active" role="button" onclick="alert('로그인 후 이용가능합니다.'), window.location.href='/user/login'">글 작성하기</a>
-        <a class="btn btn-outline-secondary" role="button" href="/user/login">로그인</a>
-        <a class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
+        <a th:if="${admin_role}" class="btn btn-outline-secondary" role="button" onclick="alert('이미 로그인이 되어있습니다.')" href="/user/login">로그인</a>
+        <a th:unless="${admin_role}" class="btn btn-outline-secondary" role="button" href="/user/login">로그인</a>
+        <a th:if="${admin_role}" class="btn btn-outline-secondary" role="button" onclick="alert('이미 로그인이 되어있습니다.')" href="/user/signup">회원가입</a>
+        <a th:unless="${admin_role}" class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
         <form id="my_form" method="post" action="/user/logout">
             <a id="logout-text" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
         </form>
