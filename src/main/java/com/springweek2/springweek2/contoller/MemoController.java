@@ -1,7 +1,6 @@
 package com.springweek2.springweek2.contoller;
 
 import com.springweek2.springweek2.dto.MemoRequestDto;
-import com.springweek2.springweek2.dto.PostRequestDto;
 import com.springweek2.springweek2.model.Memo;
 import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.security.UserDetailsImpl;

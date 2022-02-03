@@ -1,7 +1,6 @@
 package com.springweek2.springweek2.model;
 
 import com.springweek2.springweek2.dto.PostRequestDto;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

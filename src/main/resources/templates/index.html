@@ -106,9 +106,8 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     console.log(response)
-                    if (response === null) {
-                        alert('로그인 후 이용가능합니다.');
-                        window.location.href="/login"
+                    if (response === 0) {
+                        alert('게시글을 작성해주세요.');
                     }
                     else {
                         alert('게시글이 성공적으로 작성되었습니다.');
@@ -200,9 +199,9 @@
                                             <div class="field">
                                                 <div class="row gx-4 gx-lg-5 align-items-center my-5">
                                                     <p>제목</p>
-                                                    <textarea class="textarea" placeholder="제목" rows="1" id="update-post-title${postId}"></textarea>
+                                                    <textarea class="textarea" placeholder="제목" rows="1" id="update-post-title${postId}">${title}</textarea>
                                                     <p>게시글</p>
-                                                    <textarea class="textarea" placeholder="작성내용" rows="10" id="update-post-contents${postId}"></textarea>
+                                                    <textarea class="textarea" placeholder="작성내용" rows="10" id="update-post-contents${postId}">${contents}</textarea>
                                                 </div>
                                             </div>
                                             <nav class="level is-mobile">
@@ -240,10 +239,6 @@
                                                 <div class="level-right">
                                                     <div class="level-item">
                                                         <a class="button is-sparta" onclick="writeMemo(${id}, $('#memo-contents').val())">댓글 작성하기</a>
-                                                    </div>
-                                                    <div class="level-item">
-                                                        <a class="button is-sparta is-outlined"
-                                                           onclick="window.location.href='/'">돌아가기</a>
                                                     </div>
                                                 </div>
                                             </nav>
@@ -289,10 +284,6 @@
                                                         <a class="button is-sparta is-outlined"
                                                            onclick="userdelmemo(isAdmin, ${id})">삭제하기</a>
                                                     </div>
-                                                    <div class="level-item">
-                                                        <a class="button is-sparta is-outlined"
-                                                           onclick="toggle_sign_up(), $('.box').remove()">돌아가기</a>
-                                                    </div>
                                                 </div>
                                             </nav>
                                         </div>
@@ -310,11 +301,11 @@
                                                     <nav class="level is-mobile">
                                                         <div class="level-right">
                                                             <div class="level-item">
-                                                                <a id="updateMemo" class="button is-sparta" onclick="updateMemo(${id})">게시글 수정하기</a>
+                                                                <a id="updateMemo" class="button is-sparta" onclick="updateMemo(${id})">댓글 수정하기</a>
                                                             </div>
                                                             <div class="level-item">
                                                                 <a class="button is-sparta is-outlined"
-                                                                   onclick='$("#update").removeClass("is-active")'>돌아가기</a>
+                                                                   onclick="$('#memobox${id}').hide(), $('#memoboxes${id}').show()">돌아가기</a>
                                                             </div>
                                                         </div>
                                                     </nav>
@@ -339,8 +330,10 @@
                 data: JSON.stringify(data),
                 success: function (response) {
                     console.log(response)
-                    if (typeof(response) === typeof("sdsd"))
+                    if (typeof(response) === typeof("sdsd")){
                         alert('로그인 후 이용가능합니다.');
+                        window.location.href="/user/login";
+                    }
                     else if(response === 0)
                         alert('댓글 내용을 입력해주세요.');
                     else {
@@ -414,22 +407,28 @@
                 success: function (response) {
                     if (response === -1)
                         alert('본인이 쓴 게시글이 아닙니다.');
-                    else
+                    else if (response === 0)
+                        alert("내용을 입력해주세요")
+                    else{
                         alert('게시글이 수정되었습니다.');
-                    window.location.reload();
+                        window.location.reload();
+                    }
                 }
             });
         }
     </script>
 
 
-    <title> 스프링 2주차 과제 </title>
+    <title> 나만의 블로그 </title>
 </head>
 <body>
 <section class="hero is-primary is-medium">
     <div class="hero-body">
         <p class="title">
             나만의블로그
+        </p>
+        <p class="subtitle">
+            스프링 2주차
         </p>
         <a th:if="${admin_role}" id="uploadPost" class="btn btn-outline-secondary active" role="button">글 작성하기</a>
         <a th:unless="${admin_role}" class="btn btn-outline-secondary active" role="button" onclick="alert('로그인 후 이용가능합니다.'), window.location.href='/user/login'">글 작성하기</a>
@@ -438,7 +437,7 @@
         <a th:if="${admin_role}" class="btn btn-outline-secondary" role="button" onclick="alert('이미 로그인이 되어있습니다.')" href="/user/signup">회원가입</a>
         <a th:unless="${admin_role}" class="btn btn-outline-secondary" role="button" href="/user/signup">회원가입</a>
         <form id="my_form" method="post" action="/user/logout">
-            <a id="logout-text" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
+            <a id="logout-text" class="btn btn-outline-secondary" href="javascript:{}" onclick="document.getElementById('my_form').submit();">로그아웃</a>
         </form>
     </div>
 </section>

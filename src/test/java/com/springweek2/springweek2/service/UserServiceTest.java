@@ -4,7 +4,6 @@ import com.springweek2.springweek2.dto.SignupRequestDto;
 import com.springweek2.springweek2.model.User;
 import com.springweek2.springweek2.model.UserRoleEnum;
 import com.springweek2.springweek2.repository.UserRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

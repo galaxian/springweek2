@@ -17,7 +17,7 @@ public class PostService {
     private final PostRepository postRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
@@ -25,10 +25,12 @@ public class PostService {
         return postRepository.findAllByOrderByModifiedAtDesc();
     }
 
-    public Post createPost(PostRequestDto requestDto, String username) {
+    public Long createPost(PostRequestDto requestDto, String username) {
+        if(requestDto.getContents().length() == 0 || requestDto.getTitle().length() == 0)
+            return 0L;
         Post post = new Post(requestDto, username);
         postRepository.save(post);
-        return post;
+        return post.getId();
     }
 
     public Post selectPost(Long id) {
@@ -40,6 +42,8 @@ public class PostService {
     @Transactional
     public Long updatePost(Long id, PostRequestDto requestDto, UserDetailsImpl userDetails) {
         if (userDetails.getUser().getUsername().equals(postRepository.getById(id).getUsername())) {
+            if(requestDto.getContents().length() == 0 || requestDto.getTitle().length() == 0)
+                return 0L;
             Post post = postRepository.findById(id).orElseThrow(
                     () -> new NullPointerException("선택한 게시글이 존재하지 않습니다.")
             );

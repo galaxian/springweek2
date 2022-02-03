@@ -8,7 +8,6 @@ import com.springweek2.springweek2.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public String resisterUser(Model model, SignupRequestDto requestDto) {
-        String msg = userService.resisterUser(requestDto);
+    public String resisterUser(SignupRequestDto requestDto) {
+        userService.resisterUser(requestDto);
         return "redirect:/user/login";
     }
 
@@ -37,7 +36,7 @@ public class UserController {
     }
 
     @GetMapping("/user/signup")
-    public String signup(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public String signup(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.signup(userDetails);
     }
 

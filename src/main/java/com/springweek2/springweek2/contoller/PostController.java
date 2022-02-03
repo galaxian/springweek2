@@ -3,13 +3,11 @@ package com.springweek2.springweek2.contoller;
 import com.springweek2.springweek2.dto.PostRequestDto;
 import com.springweek2.springweek2.model.Post;
 import com.springweek2.springweek2.model.UserRoleEnum;
-import com.springweek2.springweek2.repository.PostRepository;
 import com.springweek2.springweek2.security.UserDetailsImpl;
 import com.springweek2.springweek2.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +30,7 @@ public class PostController {
     }
 
     @PostMapping("/api/posts")
-    public Post createPost(@RequestBody PostRequestDto requestDto,
+    public Long createPost(@RequestBody PostRequestDto requestDto,
                            @AuthenticationPrincipal UserDetailsImpl userDetail) {
         String username = userDetail.getUser().getUsername();
 

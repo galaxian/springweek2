@@ -37,7 +37,7 @@ public class MemoService {
             memoRepository.deleteById(id);
             return id;
         }
-        return (long)-1;
+        return -1L;
     }
 
     @Transactional
@@ -53,7 +53,7 @@ public class MemoService {
             memoRepository.save(memo);
             return id;
         }
-        return (long)-1;
+        return -1L;
     }
 
     public Memo ModalMemo(Long id) {
