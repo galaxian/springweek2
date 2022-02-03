@@ -26,8 +26,8 @@ public class UserController {
     }
 
     @PostMapping("/user/signup")
-    public String resisterUser(SignupRequestDto requestDto) {
-        userService.resisterUser(requestDto);
+    public String resisterUser(Model model, SignupRequestDto requestDto) {
+        String msg = userService.resisterUser(requestDto);
         return "redirect:/user/login";
     }
 

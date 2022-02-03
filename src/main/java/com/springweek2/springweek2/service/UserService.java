@@ -26,10 +26,14 @@ public class UserService {
         String username = requestDto.getUsername();
 
         if (!username.matches("^[A-Za-z\\d]{3,}$")) {
-            throw new IllegalArgumentException("아이디는 3자 이상 대소문자와 숫자만 사용가능합니다");
+            throw new NullPointerException("아이디는 3자 이상 대소문자와 숫자만 사용가능합니다");
         }
         if (requestDto.getPassword().contains(username)){
-            throw new IllegalArgumentException("비밀번호에 아이디는 포함할 수 없습니다.");
+            throw new NullPointerException("비밀번호에 아이디는 포함할 수 없습니다.");
+        }
+
+        if (requestDto.getPassword().length() < 4) {
+            throw new NullPointerException("비밀번호는 4자 이상 가능합니다.");
         }
 
         Optional<User> found = userRepository.findByUsername(username);
@@ -40,7 +44,7 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         String checkPassword = requestDto.getCheckPassword();
         if (!requestDto.getPassword().equals(checkPassword)) {
-            throw new IllegalArgumentException("비밀번호와 비밀번호 확인의 값이 일치하지 않습니다.");
+            throw new NullPointerException("비밀번호와 비밀번호 확인의 값이 일치하지 않습니다.");
         }
         UserRoleEnum role = UserRoleEnum.USER;
 

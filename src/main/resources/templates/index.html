@@ -67,8 +67,11 @@
         }
 
         function userdelmemo(isAdmin, id) {
-            if(isAdmin === true)
-                deleteMemo(id)
+            if(isAdmin === true){
+                if(window.confirm("정말로 삭제하시겠습니까?")){
+                    deleteMemo(id)
+                }
+            }
             else {
                 alert("로그인 후 이용가능합니다.")
                 window.location.href = "/user/login"
@@ -377,9 +380,9 @@
                 success: function (response) {
                     if (response === -1)
                         alert('본인이 쓴 댓글이 아닙니다.');
-                    else
+                    else{
                         alert('댓글이 삭제되었습니다.');
-                    window.location.reload();
+                        window.location.reload();}
                 }
             });
         }
